@@ -31,6 +31,7 @@ type _projConfig struct {
 	SkipSentry     bool
 	SkipAsyncTask  bool
 	SkipCache      bool
+	SkipRedis      bool
 	SkipElasticApm bool
 }
 
@@ -80,6 +81,7 @@ func main() {
 	cmdNew.Flags().BoolVar(&projConfig.SkipSentry, "skip-sentry", false, "skip sentry")
 	cmdNew.Flags().BoolVar(&projConfig.SkipElasticApm, "skip-elasticapm", false, "skip elastic APM")
 	cmdNew.Flags().BoolVar(&projConfig.SkipCache, "skip-cache", false, "skip cache")
+	cmdNew.Flags().BoolVar(&projConfig.SkipRedis, "skip-redis", false, "skip redis")
 	cmdNew.Flags().BoolVar(&projConfig.SkipAsyncTask, "skip-asynctask", false, "skip asynctask")
 
 	cmd.AddCommand(cmdNew)

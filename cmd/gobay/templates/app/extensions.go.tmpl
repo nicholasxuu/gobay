@@ -4,19 +4,25 @@ import (
 	// "context"
 	// schema "{{ $.Url }}/gen/entschema"
 	// "github.com/facebookincubator/ent/dialect"
+{{- if not $.SkipRedis }}
 	// "github.com/go-redis/redis"
+{{- end }}
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/shanbay/gobay"
 {{- if not $.SkipAsyncTask }}
 	"github.com/shanbay/gobay/extensions/asynctaskext"
 {{- end }}
+{{- if not $.SkipCache }}
 	"github.com/shanbay/gobay/extensions/cachext"
 	_ "github.com/shanbay/gobay/extensions/cachext/backend/redis"
+{{- end }}
 	// "github.com/shanbay/gobay/extensions/entext"
 {{- if not $.SkipElasticApm }}
 	"github.com/shanbay/gobay/extensions/esapmext"
 {{- end }}
+{{- if not $.SkipRedis }}
 	"github.com/shanbay/gobay/extensions/redisext"
+{{- end }}
 {{- if not $.SkipSentry }}
 	"github.com/shanbay/gobay/extensions/sentryext"
 {{- end }}
@@ -30,12 +36,16 @@ import (
 // Extensions defined Extensions to be used by init app
 func Extensions() map[gobay.Key]gobay.Extension {
 	return map[gobay.Key]gobay.Extension{
+{{- if not $.SkipRedis }}
 		"redis":  &redisext.RedisExt{NS: "redis_"},
+{{- end }}
 		"seqgen": &seqgenext.SequenceGeneratorExt{NS: "seqgen_", RedisExtName: "redis"},
 {{- if not $.SkipSentry }}
 		"sentry": &sentryext.SentryExt{NS: "sentry_"},
 {{- end }}
+{{- if not $.SkipCache }}
 		"cache": &cachext.CacheExt{NS: "cache_"},
+{{- end }}
 {{- if not $.SkipElasticApm }}
 		"apm":   &esapmext.EsApmExt{},
 {{- end }}
@@ -55,12 +65,16 @@ func Extensions() map[gobay.Key]gobay.Extension {
 }
 
 var (
+{{- if not $.SkipRedis }}
 	Redis     *redisext.RedisExt
+{{- end }}
 	Seqgen    *seqgenext.SequenceGeneratorExt
 {{- if not $.SkipSentry }}
 	Sentry    *sentryext.SentryExt
 {{- end }}
+{{- if not $.SkipCache }}
 	Cache     *cachext.CacheExt
+{{- end }}
 {{- if not $.SkipElasticApm }}
 	ApmTracer *apm.Tracer
 {{- end }}
@@ -72,12 +86,16 @@ var (
 
 func InitExts(app *gobay.Application) {
 	// EntClient = app.Get("entext").Object().(*schema.Client)
+{{- if not $.SkipRedis }}
 	Redis = app.Get("redis").Object().(*redisext.RedisExt)
+{{- end }}
 	Seqgen = app.Get("seqgen").Object().(*seqgenext.SequenceGeneratorExt)
 {{- if not $.SkipSentry }}
 	Sentry = app.Get("sentry").Object().(*sentryext.SentryExt)
 {{- end }}
+{{- if not $.SkipCache }}
 	Cache = app.Get("cache").Object().(*cachext.CacheExt)
+{{- end }}
 {{- if not $.SkipElasticApm }}
 	ApmTracer = app.Get("apm").Object().(*apm.Tracer)
 {{- end }}
