@@ -37,7 +37,7 @@ func checkRPCHealth(service string) {
 }
 
 func checkAPIHealth(service string) {
-	healthAPI := "http://127.0.0.1:5000/YourBasePath/health?type=" + service
+	healthAPI := "http://127.0.0.1:5000/{{ $.Name }}/health?type=" + service
 	req, _ := http.NewRequest("GET", healthAPI, nil)
 
 	var resp *http.Response

@@ -22,6 +22,8 @@ import (
 	// "{{ $.Url }}/app/models"
 	"{{ $.Url }}/gen/openapi/restapi"
 	"{{ $.Url }}/gen/openapi/restapi/operations"
+
+	sentryopenapimw "github.com/shanbay/gobay/extensions/sentryext/openapi"
 )
 
 // Serve serve OpenAPI http server
@@ -89,9 +91,13 @@ func configureAPI(s *restapi.Server, api *operations.{{ toCamel $.Name }}API, im
 	// So this is a good place to plug in a panic handling middleware, logging and metrics
 	)
 
+	mw, err := sentryopenapimw.GetMiddleWare(myapp.Sentry)
+	if err != nil {
+		panic(err)
+	}
 	// The middleware configuration is for the handler executors. These do not apply to the swagger.json document.
 	// The middleware executes after routing but before authentication, binding and validation
-	mdwBuilders := []middleware.Builder{}
+	mdwBuilders := []middleware.Builder{mw}
 
 {{- if not $.SkipElasticApm }}
 	if enableApm {
